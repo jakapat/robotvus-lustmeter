@@ -1,30 +1,49 @@
 import streamlit as st
+import requests
 import random
+import os
 
-st.set_page_config(page_title="Self Assessment by Robotvus", layout="centered")
-st.title("🤖 โรบอทวุส – แบบประเมินอารมณ์")
+# ✅ ใส่ API KEY ของคุณตรงนี้
+PEXELS_API_KEY = "YOUR_PEXELS_API_KEY"  # 🔁 แก้ตรงนี้
+PEXELS_SEARCH_TERM = "sexy woman"
+NUM_IMAGES = 15
 
-st.markdown("### 🧠 กรุณาประเมินตัวเองในแต่ละด้าน")
+st.set_page_config(page_title="Robotvus Lust Meter", layout="centered")
+st.title("🤖 โรบอทวุส – เครื่องวัดระดับความเงี่ยน")
 
-# Slider แบบหล่อ ๆ
-mind = st.slider("🧘‍♂️ สภาพจิตใจตอนนี้", 0, 10, 5)
-focus = st.slider("🎯 สมาธิของคุณ", 0, 10, 5)
-tempt = st.slider("🔥 ความหวั่นไหวต่อสิ่งเย้ายวน", 0, 10, 5)
+st.markdown("### 🎛️ ปรับระดับเพื่อประเมินตัวคุณเอง")
 
-if st.button("✅ ประเมินเลย"):
-    score = (mind + focus + (10 - tempt)) / 3
-    st.subheader("📊 ผลการประเมินของคุณ")
+# 🎚️ Slider ให้ผู้ใช้ประเมิน
+lust_level = st.slider("วันนี้คุณใจสั่นระดับไหน?", 1, 10, 5)
 
-    st.progress(score / 10)
+# 🔁 ดึงภาพสุ่มจาก Pexels API
+def get_random_image():
+    headers = {"Authorization": PEXELS_API_KEY}
+    params = {"query": PEXELS_SEARCH_TERM, "per_page": NUM_IMAGES}
+    try:
+        response = requests.get("https://api.pexels.com/v1/search", headers=headers, params=params)
+        data = response.json()
+        if "photos" in data and data["photos"]:
+            return random.choice(data["photos"])["src"]["large"]
+    except:
+        return "https://placekitten.com/600/400"
+    return "https://placekitten.com/600/400"
 
-    if score >= 8:
-        st.success("คุณเพิ่งดอจ๊อง ✨")
-        st.image("https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg", caption="เธอมองคุณด้วยความชื่นชม")
-    elif score >= 5:
-        st.warning("คุณเริ่มเงี้ยน 😅")
-        st.image("https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg", caption="เธอมองคุณอย่างเป็นห่วง")
+# 🧪 แสดงผลตามระดับ
+if st.button("ประเมินเลย!"):
+    st.subheader(f"ระดับความเงี่ยนของคุณคือ: {lust_level}/10")
+
+    image_url = get_random_image()
+    st.image(image_url, width=500)
+
+    if lust_level <= 3:
+        st.success("🟢 คุณยังนิ่ง! โรบอทวุสขอคารวะ")
+    elif lust_level <= 6:
+        st.warning("🟡 เริ่มใจเต้นเบาๆ... อย่าเปิด IG เลยนะ")
+    elif lust_level <= 8:
+        st.error("🔴 สั่นไหวแรงมาก! เตือนด้วยใจ")
     else:
-        st.error("อ๊าาาาส ชักต่อหวา... 🫠")
-        st.image("https://images.pexels.com/photos/2100063/pexels-photo-2100063.jpeg", caption="ไอ๊จ้ะะะะ!! โรบอทวุสขอเตือน!")
+        st.error("🚨 อันตราย! โรบอทวุสสั่งห้ามเปิด OnlyFans 🔒")
+        st.markdown("## 🗣️ **ไอ๊จ้ะะะะะะ!!** 😤")
 
-    st.button("🧘‍♀️ เริ่มใหม่")
+    st.button("ตั้งสติใหม่ 🙏")
