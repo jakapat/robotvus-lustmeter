@@ -1,44 +1,30 @@
 import streamlit as st
-import requests
 import random
-import os
 
-PEXELS_API_KEY = os.getenv("PEXELS_API_KEY", "5Ez9UD4BxqpRHxvsnFOzhrXZp6Lf2UpFnrXIcYg9vQivxOKwABlIHnQ7")  # ใช้ ENV หรือเว้นว่างไว้
-PEXELS_SEARCH_TERM = "beautiful woman"
-NUM_IMAGES = 10
+st.set_page_config(page_title="Self Test by Robotvus", layout="centered")
+st.title("🤖 โรบอทวุส – แบบประเมินอารมณ์")
 
-st.set_page_config(page_title="🤖 Lust Meter", layout="centered")
-st.audio("https://www.bensound.com/bensound-music/bensound-sunny.mp3", loop=True)
+q1 = st.radio("1. วันนี้คุณรู้สึกยังไง?", ["สงบ", "เฉยๆ", "หวิวๆ", "ใจสั่น 😳"])
+q2 = st.radio("2. เวลาเจอสาวใน TikTok", ["เลื่อนผ่าน", "แอบดูนิดๆ", "ดูจนลืมเวลา"])
+q3 = st.radio("3. คุณคิดว่าคุณ...", ["ควบคุมตัวเองได้", "ลังเล", "หลุดไปแล้ว 🫣"])
 
-st.markdown("""
-    <h1 style='text-align: center; color: #fca311;'>🤖 โรบอทวุสวัดระดับความเงี่ยน</h1>
-    <p style='text-align: center; color: #6c757d;'>ระบบประเมินอารมณ์ขำๆ พร้อมช่วยให้คุณตั้งสติกลับมา 🤖</p>
-""", unsafe_allow_html=True)
+if st.button("ประเมินเลย"):
+    score = sum([
+        ["สงบ", "เฉยๆ", "หวิวๆ", "ใจสั่น 😳"].index(q1),
+        ["เลื่อนผ่าน", "แอบดูนิดๆ", "ดูจนลืมเวลา"].index(q2),
+        ["ควบคุมตัวเองได้", "ลังเล", "หลุดไปแล้ว 🫣"].index(q3)
+    ])
 
-def get_random_image():
-    if not PEXELS_API_KEY:
-        return "https://placekitten.com/400/300"
-    headers = {"Authorization": PEXELS_API_KEY}
-    params = {"query": PEXELS_SEARCH_TERM, "per_page": NUM_IMAGES}
-    try:
-        response = requests.get("https://api.pexels.com/v1/search", headers=headers, params=params)
-        data = response.json()
-        return random.choice(data["photos"])["src"]["medium"]
-    except:
-        return "https://placekitten.com/400/300"
+    st.subheader("🤖 โรบอทวุสประเมินว่า...")
 
-if st.button("วัดระดับความเงี่ยน 🧪"):
-    level = random.randint(1, 10)
-    st.subheader(f"ระดับความเงี่ยนของคุณคือ: {level}/10")
-    img_url = get_random_image()
-    st.image(img_url, width=400)
-
-    if level <= 3:
-        st.success("🟢 สงบ สติอยู่ครบ")
-    elif level <= 6:
-        st.warning("🟡 เริ่มหวั่นไหว... ไปล้างหน้า!")
-    elif level <= 8:
-        st.error("🔴 โรบอทวุสแนะนำให้เบรก")
+    if score <= 2:
+        st.success("คุณคือ พระอาทิตย์แห่งสติ ☀️")
+        st.image("https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg", caption="เธอชื่นชมคุณจากแดนสงบ")
+    elif score <= 4:
+        st.warning("คุณคือ นักเหม่อผู้ไม่แน่ใจ 🌀")
+        st.image("https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg", caption="เธอกำลังถามว่า... คิดถึงใครอยู่เหรอ?")
     else:
-        st.error("🚨 ระบบเตือน: ระดับเกินพิกัด! ไอ๊จ้ะะะะ!!")
+        st.error("คุณคือ เจ้าชายไฟราคะ 🔥")
+        st.image("https://images.pexels.com/photos/2100063/pexels-photo-2100063.jpeg", caption="โรบอทวุส: ไอ๊จ้ะะะะ!! ใจเย็นลูกพี่!")
+
     st.button("ตั้งสติใหม่ 🙏")
