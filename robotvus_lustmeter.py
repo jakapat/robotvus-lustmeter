@@ -4,7 +4,7 @@ import random
 import os
 
 # ✅ ใส่ API KEY ของคุณตรงนี้
-PEXELS_API_KEY = "YOUR_PEXELS_API_KEY"  # 🔁 แก้ตรงนี้
+PEXELS_API_KEY = "5Ez9UD4BxqpRHxvsnFOzhrXZp6Lf2UpFnrXIcYg9vQivxOKwABlIHnQ7"  # 🔁 แก้ตรงนี้
 PEXELS_SEARCH_TERM = "sexy woman"
 NUM_IMAGES = 15
 
